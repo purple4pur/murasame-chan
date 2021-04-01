@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 nonebot = "*"
 nonebot-adapter-cqhttp = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

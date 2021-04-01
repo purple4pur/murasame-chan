@@ -1,6 +1,9 @@
 import nonebot
 from nonebot.adapters.cqhttp import Bot as CQHTTPBot
+from dotenv import load_dotenv
 
+
+load_dotenv()
 nonebot.init()
 
 driver = nonebot.get_driver()

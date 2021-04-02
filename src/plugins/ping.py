@@ -1,10 +1,8 @@
-from nonebot import on_command, matcher
-from nonebot.typing import T_State
-from nonebot.adapters import Bot, Event
+from nonebot import on_command
 
 
 ping = on_command("ping", priority=5)
 
 @ping.handle()
-async def handle(bot: Bot, event: Event, state: T_State):
+async def handle():
     await ping.finish("ムラサメです！")

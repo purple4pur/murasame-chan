@@ -1,12 +1,11 @@
 from nonebot import on_command
-from nonebot.rule import to_me
 from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 
 from random import randint
 
 
-roll = on_command("roll", rule=to_me(), priority=5)
+roll = on_command("roll", priority=5)
 
 @roll.handle()
 async def handle(bot: Bot, event: Event, state: T_State):
@@ -14,8 +13,6 @@ async def handle(bot: Bot, event: Event, state: T_State):
     if raw_args:
         arg_list = raw_args.split()
         state["arg1"] = arg_list[0]
-        # for i in range(len(arg_list)):
-        #     state[f"arg{i+1}"] = arg_list[i]
 
     isValid = True
     if "arg1" in state:
@@ -30,6 +27,6 @@ async def handle(bot: Bot, event: Event, state: T_State):
 
     if isValid:
         r = randint(0, max)
-        await roll.finish(f"[roll in 0~{max}]:\n{r}")
+        await roll.finish(f"[{event.get_user_id()}] 摇了 [{r}]！好耶！")
     else:
-        await roll.finish("Invalid input!")
+        await roll.finish("小从雨现在还只会roll正整数哦！")

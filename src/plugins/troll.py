@@ -40,4 +40,7 @@ async def handle(bot: Bot, event: Event, state: T_State):
 
 
     else:
-        await roll.finish(f"当然是{choice(arg_list)}啦！")
+        start = ["当然是", "必然是", "这不"]
+        end = ["啦！", "", "？"]
+        r = randint(0, len(start)-1)
+        await roll.finish(f"{start[r]}{choice(arg_list)}{end[r]}")

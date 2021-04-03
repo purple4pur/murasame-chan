@@ -9,6 +9,7 @@ roll = on_command("roll", priority=5)
 
 @roll.handle()
 async def handle(bot: Bot, event: Event, state: T_State):
+    argc = 0
     raw_args = str(event.get_message()).strip()
     if raw_args:
         arg_list = raw_args.split()

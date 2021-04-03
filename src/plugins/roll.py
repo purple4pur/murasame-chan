@@ -27,6 +27,9 @@ async def handle(bot: Bot, event: Event, state: T_State):
 
     if isValid:
         r = randint(0, max)
-        await roll.finish(f"({event.get_user_id()}) 摇了 {r}！好耶！")
+        ending = "好耶！"
+        if r <= round(max/3):
+            ending = "不会吧不会吧？"
+        await roll.finish(f"({event.get_user_id()})摇了 {r}！" + ending)
     else:
         await roll.finish("小从雨现在还只会roll正整数哦！")

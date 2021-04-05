@@ -1,6 +1,7 @@
 from nonebot import on_command
 from nonebot.typing import T_State
-from nonebot.adapters import Bot, Event
+from nonebot.adapters import Bot
+from nonebot.adapters.cqhttp import MessageEvent
 
 from random import randint, choice
 
@@ -8,7 +9,7 @@ from random import randint, choice
 roll = on_command("roll", priority=5)
 
 @roll.handle()
-async def handle(bot: Bot, event: Event, state: T_State):
+async def handle(bot: Bot, event: MessageEvent, state: T_State):
     argc = 0
     raw_args = str(event.get_message()).strip()
     if raw_args:
@@ -36,7 +37,7 @@ async def handle(bot: Bot, event: Event, state: T_State):
             ending = "好耶！"
             if r <= round(max/3):
                 ending = "不会吧不会吧？"
-            await roll.finish(f"({event.get_user_id()}) 摇了 {r}！" + ending)
+            await roll.finish(f"{event.sender.nickname}({event.get_user_id()}) 摇了 {r}！" + ending)
         else:
             await roll.finish("小从雨只会摇正整数哦！")
 

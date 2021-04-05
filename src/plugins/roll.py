@@ -6,7 +6,7 @@ from nonebot.adapters.cqhttp import MessageEvent
 from random import randint, choice
 
 
-roll = on_command("roll", priority=5)
+roll = on_command("roll", priority=1, block=True)
 
 @roll.handle()
 async def handle(bot: Bot, event: MessageEvent, state: T_State):

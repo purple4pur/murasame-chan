@@ -2,7 +2,7 @@ from nonebot import on_command
 from nonebot.adapters import Bot
 
 
-help = on_command("help", priority=5)
+help = on_command("help", priority=1, block=True)
 
 @help.handle()
 async def handle(bot: Bot):

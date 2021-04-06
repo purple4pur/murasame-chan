@@ -21,18 +21,18 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     # 摇点
     if argc <= 1:
-        isValid = True
+        is_valid = True
         if "arg1" in state:
             try:
                 max = int(state["arg1"])
             except ValueError:
                 max = -1
             if max <= 0:
-                isValid = False
+                is_valid = False
         else:
             max = 100
 
-        if isValid:
+        if is_valid:
             r = randint(0, max)
             ending = "好耶！"
             if r <= round(max/3):

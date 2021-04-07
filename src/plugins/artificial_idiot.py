@@ -44,3 +44,29 @@ async def handle(bot: Bot, event: Event):
                     # 截取 [A]是[不是B]
                     await artificial_idiot.finish(msg[:index-1] + msg[index:])
                 break
+
+
+artificial_idiot_2 = on_command("", rule=keyword("有没有"), priority=2, block=True)
+
+@artificial_idiot_2.handle()
+async def handle(bot: Bot, event: Event):
+    msg = str(event.get_message())
+    l = len(msg)
+    index = msg.find("有没有")
+
+    # 「你」「我」互换
+    msg = msg.replace("你", "&*temp$#")
+    msg = msg.replace("我", "你")
+    msg = msg.replace("&*temp$#", "我")
+    # 「？」换为「！」
+    msg = msg.replace("？", "！")
+    # 「?」换为「!」
+    msg = msg.replace("?", "!")
+
+    r = randint(0, 1)
+    if r == 1:
+        # 截取 [A有]没有[B]
+        await artificial_idiot_2.finish(msg[:index+1] + msg[index+3:])
+    else:
+        # 截取 [A]有[没有B]
+        await artificial_idiot_2.finish(msg[:index] + msg[index+1:])

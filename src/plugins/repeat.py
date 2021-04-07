@@ -24,8 +24,8 @@ async def handle(bot: Bot, event: MessageEvent):
             if msg == history[group_id][0]:
                 history[group_id][1] += 1
 
-                # 已经被群友复读了超过 3 次，我来复读
-                if history[group_id][1] >= 3 and history[group_id][2] is False:
+                # 已经被群友复读了超过 2 次，我来复读
+                if history[group_id][1] >= 2 and history[group_id][2] is False:
                     await repeat.send(msg)
                     history[group_id][2] = True
             

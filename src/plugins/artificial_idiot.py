@@ -1,6 +1,5 @@
 from nonebot import on_command
 from nonebot.rule import keyword
-from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 
 from random import randint
@@ -9,7 +8,7 @@ from random import randint
 artificial_idiot = on_command("", rule=keyword("不"), priority=2, block=True)
 
 @artificial_idiot.handle()
-async def handle(bot: Bot, event: Event, state: T_State):
+async def handle(bot: Bot, event: Event):
     msg = str(event.get_message())
     l = len(msg)
 

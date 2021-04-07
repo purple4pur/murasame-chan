@@ -16,13 +16,8 @@ def get_record_url():
     return f"file://{path}/../static/audio/{choice(records)}"
 
 
-sleep_en = on_command("sleep", aliases={"睡觉"}, priority=3, block=True)
-# sleep_zh = on_command("睡觉", priority=3, block=True)
+sleep = on_command("sleep", aliases={"睡觉"}, priority=3, block=True)
 
-@sleep_en.handle()
+@sleep.handle()
 async def handle_en(bot: Bot):
-    await sleep_en.finish(MessageSegment.record(get_record_url()))
-
-# @sleep_zh.handle()
-# async def handle_zh(bot: Bot):
-#     await sleep_zh.finish(MessageSegment.record(get_record_url()))
+    await sleep.finish(MessageSegment.record(get_record_url()))

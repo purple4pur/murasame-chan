@@ -65,6 +65,8 @@ async def handle(bot: Bot, event: Event):
 
     r = randint(0, 1)
     if r == 1:
+        # 截取 [A有]没有[B]
         await artificial_idiot_2.finish(msg[:index+1] + msg[index+3:])
     else:
+        # 截取 [A]有[没有B]
         await artificial_idiot_2.finish(msg[:index] + msg[index+1:])

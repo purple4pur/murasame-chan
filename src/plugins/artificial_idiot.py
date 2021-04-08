@@ -1,11 +1,12 @@
 from nonebot import on_command
 from nonebot.rule import keyword
+from nonebot.typing import T_State
 from nonebot.adapters import Bot, Event
 
 from random import randint
 
 
-async def async_checker(bot: Bot, event: Event) -> bool:
+async def async_checker(bot: Bot, event: Event, state: T_State) -> bool:
     msg = str(event.get_message()).strip()
     if msg.find("不") != -1 or msg.find("有没有") != -1:
         return True

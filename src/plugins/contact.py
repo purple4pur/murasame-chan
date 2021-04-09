@@ -11,7 +11,7 @@ contact = on_command("contact", aliases={"feedback", "反馈"}, priority=1, bloc
 async def handle(bot: Bot, event: MessageEvent):
     content = str(event.get_message()).strip()
     if not content:
-        await contact.finish("啊叻？小从雨不知道要发送什么啦...")
+        await contact.finish("啊叻？小丛雨不知道要发送什么啦...")
     
     else:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -28,4 +28,4 @@ async def handle(bot: Bot, event: MessageEvent):
             msg = f"[Contact Message]\nSender: {event.get_user_id()}\nFrom: Group({group_id})\nTime: {now}\nContent: {content}"
         await bot.send_private_msg(user_id=593457446, message=msg)
 
-        await contact.finish("小从雨已经向狗修金报告啦~")
+        await contact.finish("小丛雨已经向狗修金报告啦~")

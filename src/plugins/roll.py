@@ -39,7 +39,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
                 ending = "不会吧不会吧？"
             await roll.finish(MessageSegment.at(event.get_user_id()) + f"摇了 {r}！" + ending)
         else:
-            await roll.finish("小从雨只会摇正整数哦！")
+            await roll.finish("小丛雨只会摇正整数哦！")
 
 
     # 摇选项

@@ -44,7 +44,11 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     # 摇选项
     else:
-        start = ["当然是", "必然", "这不得"]
-        end = ["啦！", "。", "？"]
-        r = randint(0, len(start)-1)
-        await roll.finish(f"{start[r]}{choice(arg_list)}{end[r]}")
+        arg_list = list(set(arg_list))
+        if len(arg_list) > 1:
+            start = ["当然是", "必然", "这不得"]
+            end = ["啦！", "。", "？"]
+            r = randint(0, len(start)-1)
+            await roll.finish(f"{start[r]}{choice(arg_list)}{end[r]}")
+        else:
+            await roll.finish(f"只能是{arg_list[0]}了！你根本就没想让小丛雨帮你决定，哼！")

@@ -44,7 +44,9 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     # 摇选项
     else:
+        # 消去重复选项
         arg_list = list(set(arg_list))
+
         if len(arg_list) > 1:
             start = ["当然是", "必然", "这不得"]
             end = ["啦！", "。", "？"]

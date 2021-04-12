@@ -10,6 +10,14 @@ status = on_command("status", permission=SUPERUSER, priority=1, block=True)
 
 @status.handle()
 async def handle(bot: Bot, event: MessageEvent):
-    json = await bot.get_friend_list()
-    json_str = dumps(json)
-    await status.send(json_str)
+    friends_data = await bot.get_friend_list()
+    friends = loads(friends_data)
+    num_friends = len(friends) - 2
+
+    groups_data = await bot.get_group_list()
+    groups = loads(groups_data)
+    num_groups = len(groups)
+
+    print(dumps(groups_data))
+
+    await status.finish(f"当前共 {num_friends} 个好友，{num_groups} 个群组。")

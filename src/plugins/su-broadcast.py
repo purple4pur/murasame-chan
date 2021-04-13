@@ -3,8 +3,6 @@ from nonebot.permission import SUPERUSER
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageEvent
 
-from json import loads, dumps
-
 
 broadcast = on_command("broadcast", aliases={"广播"}, permission=SUPERUSER, priority=1, block=True)
 
@@ -19,4 +17,4 @@ async def handle(bot: Bot, event: MessageEvent):
         await bot.send_group_msg(group_id=gid, message=msg)
         cnt += 1
 
-    await broadcast.finish(f"已经发送给共 {cnt} 个群。")
+    await broadcast.finish(f"已经发送给共 {cnt} 个群组。")

@@ -12,7 +12,7 @@ from datetime import datetime
 # {
 #   gid<int>: {
 #     date<date>: {
-#       uid<int>: [sleeptime, wakeuptime]
+#       uid<int>: [sleeptime<datetime.datetime>, wakeuptime<datetime.datetime>]
 #     }
 #   }
 # }

@@ -3,8 +3,6 @@ from nonebot.permission import SUPERUSER
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageEvent
 
-from json import loads, dumps
-
 
 status = on_command("status", permission=SUPERUSER, priority=1, block=True)
 

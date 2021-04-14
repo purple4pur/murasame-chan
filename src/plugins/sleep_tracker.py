@@ -1,5 +1,5 @@
 # 在异步 io 的系统里用读写文件来管理数据状态...
-# ...这种事情怎么想都很奇怪吧！  Σ(ﾟдﾟ;)‍
+# ...这种事情怎么想都很奇怪吧！  Σ(ﾟдﾟ;)
 # 但是太懒了不想写数据库呜呜呜
 # 低情商：写数据库好麻烦
 # 高情商：便于移殖  ( •̀ ω •́ )✧
@@ -12,7 +12,7 @@ from nonebot.adapters.cqhttp.permission import GROUP
 
 from pathlib import Path
 from pickle import dump, load
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # data 存储结构：
@@ -115,7 +115,10 @@ async def handle_en(bot: Bot, event: MessageEvent):
     time_list = data[gid][date][uid]
     if time_list[0] != -1:
         delta = time_list[1] - time_list[0]
-        ending = f"昨晚你睡了{delta}哦"
+        hours, remains = divmod(delta.seconds, 3600)
+        mins, secs = divmod(remains, 60)
+
+        ending = f"昨晚你睡了{hours}小时{mins}分哦！"
     else:
         delta = -1  #########################################
         ending = "没有记录到你的睡觉时间呢"

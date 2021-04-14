@@ -114,4 +114,4 @@ async def handle_en(bot: Bot, event: MessageEvent):
     dump(data, f)
     f.close()
 
-    await good_night.finish("你醒辣！" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")
+    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")

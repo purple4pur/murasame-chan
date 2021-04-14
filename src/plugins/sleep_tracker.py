@@ -43,23 +43,22 @@ good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
 
 @good_night.handle()
 async def handle_en(bot: Bot, event: MessageEvent):
-    f = open(data_path, "rb")
-    data = load(f)
-    f.close()
-
     session_id = event.get_session_id().split("_")
     gid = int(session_id[1])
     uid = int(event.get_user_id())
     time = datetime.now()
     date = time.date()
 
+    f = open(data_path, "rb")
+    data = load(f)
+    f.close()
+
     if gid in data:
         if date in data[gid]:
-            # if uid in data[gid][date]:
-            #     data[gid][date][uid] = [time, -1]
-            # else:
-            #     data[gid][date][uid] = [time, -1]
-            data[gid][date][uid] = [time, -1]
+            if uid in data[gid][date]:
+                data[gid][date][uid][0] = time
+            else:
+                data[gid][date][uid] = [time, -1]
         else:
             data[gid][date] = {
                 uid: [time, -1]
@@ -82,15 +81,15 @@ good_morning = on_command("早", permission=GROUP, priority=3, block=True)
 
 @good_morning.handle()
 async def handle_en(bot: Bot, event: MessageEvent):
-    f = open(data_path, "rb")
-    data = load(f)
-    f.close()
-
     session_id = event.get_session_id().split("_")
     gid = int(session_id[1])
     uid = int(event.get_user_id())
     time = datetime.now()
     date = time.date()
+
+    f = open(data_path, "rb")
+    data = load(f)
+    f.close()
 
     if gid in data:
         if date in data[gid]:
@@ -98,7 +97,6 @@ async def handle_en(bot: Bot, event: MessageEvent):
                 data[gid][date][uid][1] = time
             else:
                 data[gid][date][uid] = [-1, time]
-            # data[gid][date][uid] = [time, -1]
         else:
             data[gid][date] = {
                 uid: [time, -1]
@@ -114,4 +112,12 @@ async def handle_en(bot: Bot, event: MessageEvent):
     dump(data, f)
     f.close()
 
-    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")
+    time_list = data[gid][date][uid]
+    if time_list[0] != -1:
+        delta = time_list[1] - time_list[0]
+        ending = f"昨晚你睡了{delta}哦"
+    else:
+        delta = -1  #########################################
+        ending = "没有记录到你的睡觉时间呢"
+
+    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + ending + f"\n[debug msg]:\ntime_list={data[gid][date][uid]}\ndelta={delta}")

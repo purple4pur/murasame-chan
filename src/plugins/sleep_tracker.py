@@ -1,3 +1,10 @@
+# 在异步 io 的系统里用读写文件来管理数据状态...
+# ...这种事情怎么想都很奇怪吧！  Σ(ﾟдﾟ;)‍
+# 但是太懒了不想写数据库呜呜呜
+# 低情商：写数据库好麻烦
+# 高情商：便于移殖  ( •̀ ω •́ )✧
+
+
 from nonebot import on_command
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
@@ -11,7 +18,7 @@ from datetime import datetime
 # data 存储结构：
 # {
 #   gid<int>: {
-#     date<date>: {
+#     date<datetime.date>: {
 #       uid<int>: [sleeptime<datetime.datetime>, wakeuptime<datetime.datetime>]
 #     }
 #   }
@@ -69,3 +76,42 @@ async def handle_en(bot: Bot, event: MessageEvent):
     f.close()
 
     await good_night.finish("晚安哦" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")
+
+
+good_morning = on_command("早", permission=GROUP, priority=3, block=True)
+
+@good_morning.handle()
+async def handle_en(bot: Bot, event: MessageEvent):
+    f = open(data_path, "rb")
+    data = load(f)
+    f.close()
+
+    session_id = event.get_session_id().split("_")
+    gid = int(session_id[1])
+    uid = int(event.get_user_id())
+    time = datetime.now()
+    date = time.date()
+
+    if gid in data:
+        if date in data[gid]:
+            if uid in data[gid][date]:
+                data[gid][date][uid][1] = time
+            else:
+                data[gid][date][uid] = [-1, time]
+            # data[gid][date][uid] = [time, -1]
+        else:
+            data[gid][date] = {
+                uid: [time, -1]
+            }
+    else:
+        data[gid] = {
+            date: {
+                uid: [time, -1]
+            }
+        }
+
+    f = open(data_path, "wb")
+    dump(data, f)
+    f.close()
+
+    await good_night.finish("你醒辣！" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")

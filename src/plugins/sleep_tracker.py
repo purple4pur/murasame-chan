@@ -52,6 +52,11 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid != 595741581: ######################## FOR DEBUG
         return
 
+    # 5:00 ~ 21:00 拒绝命令
+    if 5 <= time.hour < 21:
+        await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
+        return
+
     f = open(data_path, "rb")
     data = load(f)
     f.close()
@@ -77,7 +82,14 @@ async def handle_en(bot: Bot, event: MessageEvent):
     dump(data, f)
     f.close()
 
-    await good_night.finish("晚安哦" + MessageSegment.at(uid) + f"\n\n[debug msg]:\ntime_list={data[gid][date][uid]}")
+    debug_msg = f"""\n\n[debug msg]:
+gid = {gid}
+uid = {uid}
+time = {time}
+date = {date}
+datetime_list={data[gid][date][uid]}"""
+
+    await good_night.finish("晚安啦" + MessageSegment.at(uid) + "，要说到做到哦！" + debug_msg)
 
 
 good_morning = on_command("早", permission=GROUP, priority=3, block=True)
@@ -91,6 +103,11 @@ async def handle_en(bot: Bot, event: MessageEvent):
     date = time.date()
 
     if gid != 595741581: ######################## FOR DEBUG
+        return
+
+    # 14:00 ~ 次日 5:00 拒绝命令
+    if time.hour < 5 or time.hour >= 14:
+        await good_morning.finish("早上好……诶！怎么想都不太对劲吧！")
         return
 
     f = open(data_path, "rb")
@@ -119,14 +136,24 @@ async def handle_en(bot: Bot, event: MessageEvent):
     f.close()
 
     time_list = data[gid][date][uid]
-    if time_list[0] != -1:
-        delta = time_list[1] - time_list[0]
-        hours, remains = divmod(delta.seconds, 3600)
-        mins, secs = divmod(remains, 60)
+    try:
+        if time_list[0] != -1:
+            delta = time_list[1] - time_list[0]
+            hours, remains = divmod(delta.seconds, 3600)
+            mins, secs = divmod(remains, 60)
 
-        sleep_time_info = f"昨晚你睡了{hours}小时{mins}分哦！"
-    else:
-        delta = -1  #########################################
-        sleep_time_info = "没有记录到你的睡觉时间呢呜呜"
+            sleep_time_info = f"昨晚你睡了{hours}小时{mins}分哦！"
+        else:
+            delta = -1
+            sleep_time_info = "没有记录到你的睡觉时间呢呜呜呜"
 
-    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + sleep_time_info + f"\n\n[debug msg]:\ntime_list={data[gid][date][uid]}\ndelta={delta}")
+        debug_msg = f"""\n\n[debug msg]:
+gid = {gid}
+uid = {uid}
+time = {time}
+date = {date}
+datetime_list={data[gid][date][uid]}"""
+
+        await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + sleep_time_info + debug_msg)
+    except:
+        await good_morning.finish("小丛雨出错啦，苦しい……稍后重试一下呢！")

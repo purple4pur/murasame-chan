@@ -54,6 +54,8 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid != 595741581: ######################## FOR DEBUG
         return
 
+    time -= timedelta(minutes=65) ######################## FOR DEBUG
+
     # # 5:00 ~ 21:00 拒绝命令
     # if 5 <= time.hour < 21:
     #     await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
@@ -133,13 +135,13 @@ async def handle_en(bot: Bot, event: MessageEvent):
             data[gid][date][-1][1] += 1
         else:
             data[gid][date] = {
-                uid: [time, -1],
+                uid: [-1, time],
                 -1: [0, 1]
             }
     else:
         data[gid] = {
             date: {
-                uid: [time, -1],
+                uid: [-1, time],
                 -1: [0, 1]
             }
         }
@@ -150,25 +152,25 @@ async def handle_en(bot: Bot, event: MessageEvent):
 
     time_list = data[gid][date][uid]
     order = data[gid][date][-1][1]
-    try:
-        if time_list[0] != -1:
-            delta = time_list[1] - time_list[0]
-            hours, remains = divmod(delta.seconds, 3600)
-            mins, secs = divmod(remains, 60)
+    # try:
+    if time_list[0] != -1:
+        delta = time_list[1] - time_list[0]
+        hours, remains = divmod(delta.seconds, 3600)
+        mins, secs = divmod(remains, 60)
 
-            sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群第 {order} 个起床的人！"
-        else:
-            delta = -1
-            sleep_time_info = f"你是本群第 {order} 个起床的人！但没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
+        sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群第 {order} 个起床的人！"
+    else:
+        delta = -1
+        sleep_time_info = f"你是本群第 {order} 个起床的人！但没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
 
-        debug_msg = f"""\n\n[debug msg]:
+    debug_msg = f"""\n\n[debug msg]:
 gid = {gid}
 uid = {uid}
 time = {time}
 date = {date}
 datetime_list={data[gid][date][uid]}"""
 
-        await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
-    except TypeError as e:
-        print("[sleep_tracker.py]: TypeError\n" + str(e))
-        await good_morning.finish("小丛雨出错了，苦しい……")
+    await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
+    # except TypeError as e:
+    #     print("[sleep_tracker.py]: TypeError\n" + str(e))
+    #     await good_morning.finish("小丛雨出错了，苦しい……")

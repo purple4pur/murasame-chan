@@ -38,6 +38,7 @@ except FileNotFoundError:
     f = open(data_path, "wb")
     dump(data, f)
     f.close()
+    print("[sleep_tracker.py]: 未找到 data 数据文件，已创建空数据文件。")
 
 
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
@@ -168,5 +169,6 @@ date = {date}
 datetime_list={data[gid][date][uid]}"""
 
         await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
-    except:
-        await good_morning.finish("小丛雨出错啦，苦しい……可以重试一下呢！")
+    except TypeError as e:
+        print("[sleep_tracker.py]: TypeError\n" + str(e))
+        await good_morning.finish("小丛雨出错了，苦しい……")

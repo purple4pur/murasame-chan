@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 # 得到当前文件绝对路径 + data 路径
 data_path = str(Path(__file__).parent.absolute()) + "/../data/sleep_tracker_data.pickle"
 
-# 若数据文件不存在则先创建空数据文件
+# 若数据文件不存在则先创建
 try:
     f = open(data_path, "rb")
     f.close()
@@ -48,6 +48,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
     uid = int(event.get_user_id())
     time = datetime.now()
     date = time.date()
+
+    if gid != 595741581: ######################## FOR DEBUG
+        return
 
     f = open(data_path, "rb")
     data = load(f)
@@ -74,7 +77,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
     dump(data, f)
     f.close()
 
-    await good_night.finish("晚安哦" + MessageSegment.at(uid) + f"\n[debug msg]:\n{data[gid][date][uid]}")
+    await good_night.finish("晚安哦" + MessageSegment.at(uid) + f"\n\n[debug msg]:\ntime_list={data[gid][date][uid]}")
 
 
 good_morning = on_command("早", permission=GROUP, priority=3, block=True)
@@ -86,6 +89,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
     uid = int(event.get_user_id())
     time = datetime.now()
     date = time.date()
+
+    if gid != 595741581: ######################## FOR DEBUG
+        return
 
     f = open(data_path, "rb")
     data = load(f)
@@ -118,9 +124,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
         hours, remains = divmod(delta.seconds, 3600)
         mins, secs = divmod(remains, 60)
 
-        ending = f"昨晚你睡了{hours}小时{mins}分哦！"
+        sleep_time_info = f"昨晚你睡了{hours}小时{mins}分哦！"
     else:
         delta = -1  #########################################
-        ending = "没有记录到你的睡觉时间呢"
+        sleep_time_info = "没有记录到你的睡觉时间呢呜呜"
 
-    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + ending + f"\n[debug msg]:\ntime_list={data[gid][date][uid]}\ndelta={delta}")
+    await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + sleep_time_info + f"\n\n[debug msg]:\ntime_list={data[gid][date][uid]}\ndelta={delta}")

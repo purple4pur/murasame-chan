@@ -53,15 +53,10 @@ async def handle_en(bot: Bot, event: MessageEvent):
     time = datetime.now()
     date = time.date()
 
-    if gid != 595741581: ######################## FOR DEBUG
+    # 5:00 ~ 21:00 拒绝命令
+    if 5 <= time.hour < 21:
+        await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
         return
-
-    time -= timedelta(minutes=65) ######################## FOR DEBUG
-
-    # # 5:00 ~ 21:00 拒绝命令
-    # if 5 <= time.hour < 21:
-    #     await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
-    #     return
 
     # 5:00 前收到的晚安命令算到前一天里
     if time.hour < 5:
@@ -71,19 +66,17 @@ async def handle_en(bot: Bot, event: MessageEvent):
     data = load(f)
     f.close()
 
+    # 存入入睡时间
     if gid in data:
         if date in data[gid]:
             if uid in data[gid][date]:
+
+                # 如果已有入睡时间，刷新为新时间
                 if data[gid][date][uid][0] != -1:
                     data[gid][date][uid][0] = time
-                    debug_msg = f"""\n\n[debug msg]:
-gid = {gid}
-uid = {uid}
-time = {time}
-date = {date}
-datetime_list = {data[gid][date][uid]}"""
-                    await good_night.finish(MessageSegment.at(uid) + f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz" + debug_msg)
+                    await good_night.finish(MessageSegment.at(uid) + f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz")
                     return
+
                 data[gid][date][uid][0] = time
             else:
                 data[gid][date][uid] = [time, -1]
@@ -107,15 +100,7 @@ datetime_list = {data[gid][date][uid]}"""
 
     order = data[gid][date][-1][0]
 
-    debug_msg = f"""\n\n[debug msg]:
-gid = {gid}
-uid = {uid}
-time = {time}
-date = {date}
-datetime_list = {data[gid][date][uid]}
-order = {order}"""
-
-    await good_night.finish(MessageSegment.at(uid) + f"晚安啦，你是本群第 {order} 个睡觉的人！记得睡觉要说到做到哦！" + debug_msg)
+    await good_night.finish(MessageSegment.at(uid) + f"晚安啦，你是本群第 {order} 个睡觉的人！记得睡觉要说到做到哦！")
 
 
 good_morning = on_command("早", permission=GROUP, priority=3, block=True)
@@ -128,27 +113,28 @@ async def handle_en(bot: Bot, event: MessageEvent):
     time = datetime.now()
     date = time.date()
 
-    if gid != 595741581: ######################## FOR DEBUG
+    # 起床时间储存到前一天的数据里
+    date -= timedelta(days=1)
+
+    # 0:00 ~ 3:00 及 14:00 ~ 24:00 拒绝命令
+    if time.hour < 3 or time.hour >= 14:
+        await good_morning.finish("早上好……诶！怎么想都不太对吧！")
         return
-
-    # # 起床时间储存到前一天的数据里
-    # date -= timedelta(days=1)
-
-    # # 0:00 ~ 3:00 及 14:00 ~ 24:00 拒绝命令
-    # if time.hour < 3 or time.hour >= 14:
-    #     await good_morning.finish("早上好……诶！怎么想都不太对吧！")
-    #     return
 
     f = open(data_path, "rb")
     data = load(f)
     f.close()
 
+    # 存入起床时间
     if gid in data:
         if date in data[gid]:
             if uid in data[gid][date]:
+
+                # 如果已有起床时间，不作理会
                 if data[gid][date][uid][1] != -1:
-                    await good_morning.finish(MessageSegment.at(uid) + "早上好！难道睡回笼觉了吗，要是这样小丛雨可要批评你了！哼！")
+                    await good_morning.finish(MessageSegment.at(uid) + "你已经跟小丛雨说过早上好啦！难道睡回笼觉了吗，要是这样小丛雨可要批评你了！")
                     return
+
                 data[gid][date][uid][1] = time
             else:
                 data[gid][date][uid] = [-1, time]
@@ -179,15 +165,6 @@ async def handle_en(bot: Bot, event: MessageEvent):
 
         sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群第 {order} 个起床的人！"
     else:
-        delta = -1
-        sleep_time_info = f"你是本群第 {order} 个起床的人！但没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
+        sleep_time_info = f"你是本群第 {order} 个起床的人！没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
 
-    debug_msg = f"""\n\n[debug msg]:
-gid = {gid}
-uid = {uid}
-time = {time}
-date = {date}
-datetime_list = {data[gid][date][uid]}
-order = {order}"""
-
-    await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
+    await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info)

@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 #   gid<int>: {
 #     date<datetime.date>: {
 #       uid<int>: [入睡时间<datetime.datetime>, 起床时间<datetime.datetime>],
-#       -1: [已睡人数, 已起人数]
+#       -1: [已睡人数<int>, 已起人数<int>]
 #     }
 #   }
 # }
@@ -39,6 +39,7 @@ except FileNotFoundError:
     dump(data, f)
     f.close()
     print("[sleep_tracker.py]: 未找到 data 数据文件，已创建空数据文件。")
+print("[sleep_tracker.py]: 找到现有 data 数据文件，将继续使用此数据文件。")
 
 
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
@@ -61,6 +62,10 @@ async def handle_en(bot: Bot, event: MessageEvent):
     #     await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
     #     return
 
+    # 5:00 前收到的晚安命令算到前一天里
+    if time.hour < 5:
+        date -= timedelta(days=1)
+
     f = open(data_path, "rb")
     data = load(f)
     f.close()
@@ -68,6 +73,16 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid in data:
         if date in data[gid]:
             if uid in data[gid][date]:
+                if data[gid][date][uid][0] != -1:
+                    data[gid][date][uid][0] = time
+                    debug_msg = f"""\n\n[debug msg]:
+gid = {gid}
+uid = {uid}
+time = {time}
+date = {date}
+datetime_list = {data[gid][date][uid]}"""
+                    await good_night.finish(MessageSegment.at(uid) + f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz" + debug_msg)
+                    return
                 data[gid][date][uid][0] = time
             else:
                 data[gid][date][uid] = [time, -1]
@@ -130,6 +145,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid in data:
         if date in data[gid]:
             if uid in data[gid][date]:
+                if data[gid][date][uid][1] != -1:
+                    await good_morning.finish(MessageSegment.at(uid) + "早上好！难道睡回笼觉了吗，要是这样小丛雨可要批评你了！哼！")
+                    return
                 data[gid][date][uid][1] = time
             else:
                 data[gid][date][uid] = [-1, time]

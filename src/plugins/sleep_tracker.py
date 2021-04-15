@@ -105,10 +105,13 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid != 595741581: ######################## FOR DEBUG
         return
 
-    # 14:00 ~ 次日 5:00 拒绝命令
-    if time.hour < 5 or time.hour >= 14:
-        await good_morning.finish("早上好……诶！怎么想都不太对劲吧！")
+    # 14:00 ~ 次日 3:00 拒绝命令
+    if time.hour < 3 or time.hour >= 14:
+        await good_morning.finish("早上好……诶！怎么想都不太对吧！")
         return
+
+    # 起床时间储存到前一天的数据里
+    date -= timedelta(1)
 
     f = open(data_path, "rb")
     data = load(f)
@@ -145,7 +148,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
             sleep_time_info = f"昨晚你睡了{hours}小时{mins}分哦！"
         else:
             delta = -1
-            sleep_time_info = "没有记录到你的睡觉时间呢呜呜呜"
+            sleep_time_info = "没有记录到你的睡觉时间呢，下次记得跟小丛雨说晚安哦！"
 
         debug_msg = f"""\n\n[debug msg]:
 gid = {gid}
@@ -154,6 +157,6 @@ time = {time}
 date = {date}
 datetime_list={data[gid][date][uid]}"""
 
-        await good_morning.finish("你醒辣！" + MessageSegment.at(uid) + sleep_time_info + debug_msg)
+        await good_morning.finish("你醒啦！" + MessageSegment.at(uid) + sleep_time_info + debug_msg)
     except:
-        await good_morning.finish("小丛雨出错啦，苦しい……稍后重试一下呢！")
+        await good_morning.finish("小丛雨出错啦，苦しい……可以重试一下呢！")

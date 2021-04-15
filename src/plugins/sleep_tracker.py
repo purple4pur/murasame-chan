@@ -96,7 +96,8 @@ gid = {gid}
 uid = {uid}
 time = {time}
 date = {date}
-datetime_list={data[gid][date][uid]}"""
+datetime_list = {data[gid][date][uid]}
+order = {order}"""
 
     await good_night.finish(MessageSegment.at(uid) + f"晚安啦，你是本群第 {order} 个睡觉的人！记得睡觉要说到做到哦！" + debug_msg)
 
@@ -152,7 +153,6 @@ async def handle_en(bot: Bot, event: MessageEvent):
 
     time_list = data[gid][date][uid]
     order = data[gid][date][-1][1]
-    # try:
     if time_list[0] != -1:
         delta = time_list[1] - time_list[0]
         hours, remains = divmod(delta.seconds, 3600)
@@ -168,9 +168,7 @@ gid = {gid}
 uid = {uid}
 time = {time}
 date = {date}
-datetime_list={data[gid][date][uid]}"""
+datetime_list = {data[gid][date][uid]}
+order = {order}"""
 
     await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
-    # except TypeError as e:
-    #     print("[sleep_tracker.py]: TypeError\n" + str(e))
-    #     await good_morning.finish("小丛雨出错了，苦しい……")

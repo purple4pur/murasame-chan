@@ -19,7 +19,8 @@ from datetime import datetime, timedelta
 # {
 #   gid<int>: {
 #     date<datetime.date>: {
-#       uid<int>: [sleeptime<datetime.datetime>, wakeuptime<datetime.datetime>]
+#       uid<int>: [入睡时间<datetime.datetime>, 起床时间<datetime.datetime>],
+#       -1: [已睡人数, 已起人数]
 #     }
 #   }
 # }
@@ -52,10 +53,10 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid != 595741581: ######################## FOR DEBUG
         return
 
-    # 5:00 ~ 21:00 拒绝命令
-    if 5 <= time.hour < 21:
-        await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
-        return
+    # # 5:00 ~ 21:00 拒绝命令
+    # if 5 <= time.hour < 21:
+    #     await good_night.finish("太早啦，还没到说晚安的时候呢！不要跟小丛雨开玩笑了啦……")
+    #     return
 
     f = open(data_path, "rb")
     data = load(f)
@@ -67,20 +68,25 @@ async def handle_en(bot: Bot, event: MessageEvent):
                 data[gid][date][uid][0] = time
             else:
                 data[gid][date][uid] = [time, -1]
+            data[gid][date][-1][0] += 1
         else:
             data[gid][date] = {
-                uid: [time, -1]
+                uid: [time, -1],
+                -1: [1, 0]
             }
     else:
         data[gid] = {
             date: {
-                uid: [time, -1]
+                uid: [time, -1],
+                -1: [1, 0]
             }
         }
 
     f = open(data_path, "wb")
     dump(data, f)
     f.close()
+
+    order = data[gid][date][-1][0]
 
     debug_msg = f"""\n\n[debug msg]:
 gid = {gid}
@@ -89,7 +95,7 @@ time = {time}
 date = {date}
 datetime_list={data[gid][date][uid]}"""
 
-    await good_night.finish("晚安啦" + MessageSegment.at(uid) + "，要说到做到哦！" + debug_msg)
+    await good_night.finish(MessageSegment.at(uid) + f"晚安啦，你是本群第 {order} 个睡觉的人！记得睡觉要说到做到哦！" + debug_msg)
 
 
 good_morning = on_command("早", permission=GROUP, priority=3, block=True)
@@ -105,13 +111,13 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if gid != 595741581: ######################## FOR DEBUG
         return
 
-    # 14:00 ~ 次日 3:00 拒绝命令
-    if time.hour < 3 or time.hour >= 14:
-        await good_morning.finish("早上好……诶！怎么想都不太对吧！")
-        return
+    # # 起床时间储存到前一天的数据里
+    # date -= timedelta(days=1)
 
-    # 起床时间储存到前一天的数据里
-    date -= timedelta(1)
+    # # 0:00 ~ 3:00 及 14:00 ~ 24:00 拒绝命令
+    # if time.hour < 3 or time.hour >= 14:
+    #     await good_morning.finish("早上好……诶！怎么想都不太对吧！")
+    #     return
 
     f = open(data_path, "rb")
     data = load(f)
@@ -123,14 +129,17 @@ async def handle_en(bot: Bot, event: MessageEvent):
                 data[gid][date][uid][1] = time
             else:
                 data[gid][date][uid] = [-1, time]
+            data[gid][date][-1][1] += 1
         else:
             data[gid][date] = {
-                uid: [time, -1]
+                uid: [time, -1],
+                -1: [0, 1]
             }
     else:
         data[gid] = {
             date: {
-                uid: [time, -1]
+                uid: [time, -1],
+                -1: [0, 1]
             }
         }
 
@@ -139,16 +148,17 @@ async def handle_en(bot: Bot, event: MessageEvent):
     f.close()
 
     time_list = data[gid][date][uid]
+    order = data[gid][date][-1][1]
     try:
         if time_list[0] != -1:
             delta = time_list[1] - time_list[0]
             hours, remains = divmod(delta.seconds, 3600)
             mins, secs = divmod(remains, 60)
 
-            sleep_time_info = f"昨晚你睡了{hours}小时{mins}分哦！"
+            sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群第 {order} 个起床的人！"
         else:
             delta = -1
-            sleep_time_info = "没有记录到你的睡觉时间呢，下次记得跟小丛雨说晚安哦！"
+            sleep_time_info = f"你是本群第 {order} 个起床的人！但没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
 
         debug_msg = f"""\n\n[debug msg]:
 gid = {gid}
@@ -157,6 +167,6 @@ time = {time}
 date = {date}
 datetime_list={data[gid][date][uid]}"""
 
-        await good_morning.finish("你醒啦！" + MessageSegment.at(uid) + sleep_time_info + debug_msg)
+        await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info + debug_msg)
     except:
         await good_morning.finish("小丛雨出错啦，苦しい……可以重试一下呢！")

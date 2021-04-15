@@ -39,7 +39,8 @@ except FileNotFoundError:
     dump(data, f)
     f.close()
     print("[sleep_tracker.py]: 未找到 data 数据文件，已创建空数据文件。")
-print("[sleep_tracker.py]: 找到现有 data 数据文件，将继续使用此数据文件。")
+else:
+    print("[sleep_tracker.py]: 找到现有 data 数据文件，将继续使用此数据文件。")
 
 
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)

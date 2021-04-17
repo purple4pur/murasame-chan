@@ -74,7 +74,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
                 # 如果已有入睡时间，刷新为新时间
                 if data[gid][date][uid][0] != -1:
                     data[gid][date][uid][0] = time
-                    await good_night.finish(MessageSegment.at(uid) + f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz")
+                    await good_night.finish(f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz")
                     return
 
                 data[gid][date][uid][0] = time
@@ -83,14 +83,14 @@ async def handle_en(bot: Bot, event: MessageEvent):
             data[gid][date][-1][0] += 1
         else:
             data[gid][date] = {
-                uid: [time, -1],
-                -1: [1, 0]
+                -1: [1, 0],
+                uid: [time, -1]
             }
     else:
         data[gid] = {
             date: {
-                uid: [time, -1],
-                -1: [1, 0]
+                -1: [1, 0],
+                uid: [time, -1]
             }
         }
 
@@ -132,7 +132,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
 
                 # 如果已有起床时间，不作理会
                 if data[gid][date][uid][1] != -1:
-                    await good_morning.finish(MessageSegment.at(uid) + "你已经跟小丛雨说过早上好啦！难道睡回笼觉了吗，要是这样小丛雨可要批评你了！")
+                    await good_morning.finish("你已经跟小丛雨说过早上好啦！难道睡回笼觉了吗，要是这样小丛雨可要批评你了！")
                     return
 
                 data[gid][date][uid][1] = time
@@ -141,14 +141,14 @@ async def handle_en(bot: Bot, event: MessageEvent):
             data[gid][date][-1][1] += 1
         else:
             data[gid][date] = {
-                uid: [-1, time],
-                -1: [0, 1]
+                -1: [0, 1],
+                uid: [-1, time]
             }
     else:
         data[gid] = {
             date: {
-                uid: [-1, time],
-                -1: [0, 1]
+                -1: [0, 1],
+                uid: [-1, time]
             }
         }
 
@@ -163,8 +163,8 @@ async def handle_en(bot: Bot, event: MessageEvent):
         hours, remains = divmod(delta.seconds, 3600)
         mins, secs = divmod(remains, 60)
 
-        sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群第 {order} 个起床的人！"
+        sleep_time_info = f"昨晚你睡了 {hours} 小时 {mins} 分，是本群起床第 {order} 人！"
     else:
-        sleep_time_info = f"你是本群第 {order} 个起床的人！没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
+        sleep_time_info = f"你是本群起床第 {order} 人！没有记录到你昨晚的入睡时间呢，今晚记得跟小丛雨说晚安哦！"
 
     await good_morning.finish(MessageSegment.at(uid) + "你醒啦！" + sleep_time_info)

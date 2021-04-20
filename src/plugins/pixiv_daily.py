@@ -1,15 +1,13 @@
 from nonebot import on_command
-# from nonebot.typing import T_State
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
-from nonebot.permission import SUPERUSER
 
 import feedparser
 import re
 from random import choice
 
 
-pixiv_daily = on_command("给点", permission=SUPERUSER, priority=1, block=True)
+pixiv_daily = on_command("给点", priority=1, block=True)
 
 @pixiv_daily.handle()
 async def handle(bot: Bot, event: MessageEvent):

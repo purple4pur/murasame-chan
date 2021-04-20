@@ -7,6 +7,7 @@ name = "pypi"
 nonebot = "*"
 nonebot-adapter-cqhttp = "*"
 python-dotenv = "*"
+feedparser = "*"
 
 [dev-packages]
 

@@ -12,10 +12,10 @@ from random import choice
 pixiv_daily = on_command("给点", permission=SUPERUSER, priority=1, block=True)
 
 @pixiv_daily.handle()
-async def handle(bot: Bot, evnet: MessageEvent):
+async def handle(bot: Bot, event: MessageEvent):
     data = await get_image_data()
     chosen = choice(data)
-    await pixiv_daily.finish(f"title : {chosen[0]}\nlink : {chosen[1]}\nurl : {chosen[2]}")
+    await pixiv_daily.finish(f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
 async def get_image_data() -> list:

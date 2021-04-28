@@ -10,6 +10,7 @@ from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
 from nonebot.adapters.cqhttp.permission import GROUP
 
+import atexit
 from pathlib import Path
 from pickle import dump, load
 from datetime import datetime, timedelta
@@ -41,6 +42,20 @@ except FileNotFoundError:
     print("[sleep_tracker.py]: 未找到 data 数据文件，已创建空数据文件。")
 else:
     print("[sleep_tracker.py]: 找到现有 data 数据文件，将继续使用此数据文件。")
+finally:
+    f = open(data_path, "rb")
+    data = load(f)
+    f.close()
+    print("[sleep_tracker.py]: 已读取数据文件。")
+
+
+def save_to_file(data: dict):
+    f = open(data_path, "wb")
+    dump(data, f)
+    f.close()
+    print("[sleep_tracker.py]: 已将 data 保存至数据文件。")
+
+atexit.register(save_to_file, data)
 
 
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
@@ -62,9 +77,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
     if time.hour < 5:
         date -= timedelta(days=1)
 
-    f = open(data_path, "rb")
-    data = load(f)
-    f.close()
+    # f = open(data_path, "rb")
+    # data = load(f)
+    # f.close()
 
     # 存入入睡时间
     if gid in data:
@@ -121,9 +136,9 @@ async def handle_en(bot: Bot, event: MessageEvent):
         await good_morning.finish("早上好……诶！怎么想都不太对吧！")
         return
 
-    f = open(data_path, "rb")
-    data = load(f)
-    f.close()
+    # f = open(data_path, "rb")
+    # data = load(f)
+    # f.close()
 
     # 存入起床时间
     if gid in data:

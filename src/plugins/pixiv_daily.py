@@ -41,13 +41,14 @@ pixiv_daily = on_command("给点", priority=1, block=True)
 @pixiv_daily.handle()
 async def handle(bot: Bot, event: MessageEvent, state: T_State):
     raw_args = str(event.get_message()).strip()
+    argc = 0
     if raw_args:
         arg_list = raw_args.split()
         argc = len(arg_list)
         for i in range(argc):
             state[f"arg{i+1}"] = arg_list[i]
 
-    if state["arg1"] == "日榜":
+    if argc > 0 and state["arg1"] == "日榜":
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-30")
     else:
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")

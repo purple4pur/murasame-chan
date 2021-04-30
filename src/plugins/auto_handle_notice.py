@@ -64,4 +64,7 @@ async def handle(bot: Bot, event: GroupRecallNoticeEvent):
 
     msg = await bot.get_msg(message_id=msg_id)
     msg = unescape(msg["raw_message"])
-    await bot.send_group_msg(group_id=group_id, message=f"({operator_id}) 撤回了 ({sender_id}) 的消息：\n{msg}")
+    if operator_id == sender_id:
+        await bot.send_group_msg(group_id=group_id, message=f"({operator_id}) 撤回了：\n{msg}")
+    else:
+        await bot.send_group_msg(group_id=group_id, message=f"({operator_id}) 撤回了 ({sender_id}) 的消息：\n{msg}")

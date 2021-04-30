@@ -17,7 +17,7 @@ friend_recall = on_notice()
 async def handle(bot: Bot, event: FriendRecallNoticeEvent):
     print(event.message_id)
     msg_id = event.message_id
+    user_id = event.get_user_id()
     msg = await bot.get_msg(message_id=msg_id)
     print(msg)
-    await bot.send(event, msg)
-
+    await bot.send_private_msg(user_id=user_id, message=msg)

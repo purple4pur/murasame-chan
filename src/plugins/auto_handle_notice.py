@@ -1,5 +1,6 @@
 from nonebot import on_notice
 from nonebot.adapters import Bot
+from nonebot.adapters.cqhttp import MessageSegment
 from nonebot.adapters.cqhttp.event import (
     FriendRequestEvent,
     GroupRequestEvent,
@@ -39,7 +40,7 @@ async def handle(bot: Bot, event: FriendRecallNoticeEvent):
     user_id = event.get_user_id()
     msg = await bot.get_msg(message_id=msg_id)
     msg = msg["message"]
-    await bot.send_private_msg(user_id=user_id, message=f"撤回了一条消息：\n{msg}")
+    await bot.send_private_msg(user_id=user_id, message=(MessageSegment.text("撤回了一条消息：\n") + msg))
 
 
 # 群消息防撤回
@@ -53,9 +54,9 @@ async def handle(bot: Bot, event: GroupRecallNoticeEvent):
     group_id = event.group_id
 
     # 测试
-    if group_id != 873459758:
+    if group_id != 595741581:
         return
 
     msg = await bot.get_msg(message_id=msg_id)
     msg = msg["message"]
-    await bot.send_group_msg(group_id=group_id, message=f"({operator_id}) 撤回了 ({sender_id}) 的消息：\n{msg}")
+    await bot.send_group_msg(group_id=group_id, message=(MessageSegment.text(f"({operator_id}) 撤回了 ({sender_id}) 的消息：\n") + msg))

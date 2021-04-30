@@ -1,8 +1,9 @@
-from nonebot import on_notice
+from nonebot import on_notice, on_request
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageSegment, unescape
 from nonebot.adapters.cqhttp.event import (
     FriendRequestEvent,
+    FriendAddNoticeEvent,
     GroupRequestEvent,
     FriendRecallNoticeEvent,
     GroupRecallNoticeEvent
@@ -13,11 +14,18 @@ welcome_msg = "ムラサメです！请到 purple4pur.com/murasame-chan 查看�
 
 
 # 加好友请求
-friend_request = on_notice()
+friend_request = on_request()
 
 @friend_request.handle()
 async def handle(bot: Bot, event: FriendRequestEvent):
     await event.approve(bot)
+
+
+# 新好友通知
+friend_add = on_notice()
+
+@friend_add.handle()
+async def handle(bot: Bot, event: FriendAddNoticeEvent):
     user_id = event.user_id
     await bot.send_private_msg(user_id=user_id, message=welcome_msg)
     await bot.send_private_msg(user_id=593457446, message=f"已添加新好友：{user_id}")

@@ -7,7 +7,7 @@ from random import choice
 
 
 records_sleep = ["你怎么睡得着的.mp3", "上课不要睡觉.mp3"]
-records_rest = ["三点.acc", "七点.acc"]
+records_rest = ["三点.aac", "七点.aac"]
 
 # 得到当前文件绝对路径
 path = Path(__file__).parent.absolute()

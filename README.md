@@ -1,5 +1,7 @@
 # ムラサメです！
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6f8eb679409f46ee83e5ac4ec46188bf)](https://app.codacy.com/gh/purple4pur/murasame-chan?utm_source=github.com&utm_medium=referral&utm_content=purple4pur/murasame-chan&utm_campaign=Badge_Grade_Settings)
+
 基于 [nonebot2](https://github.com/nonebot/nonebot2) 的简单 QQBot，想到 ~~（会写）~~ 什么功能就写什么，就先从复刻 [猫猫(osu!bot)](https://github.com/Monodesu/osucat) 的一些简单娱乐功能开始吧……
 
 ## 小丛雨现在可以……

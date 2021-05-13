@@ -15,10 +15,12 @@ path = Path(__file__).parent.absolute()
 
 def get_record_url(obj: str):
     # 随机返回一段录音路径
-    if obj is "sleep":
+    if obj == "sleep":
         return f"file://{path}/../static/audio/{choice(records_sleep)}"
-    elif obj is "rest":
+    elif obj == "rest":
         return f"file://{path}/../static/audio/{choice(records_rest)}"
+    else:
+        return ""
 
 
 sleep = on_command("sleep", priority=3, block=True)

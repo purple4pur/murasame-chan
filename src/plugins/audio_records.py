@@ -28,7 +28,7 @@ async def handle_sleep(bot: Bot):
     await sleep.finish(MessageSegment.record(get_record_url("sleep")))
 
 
-rest = on_command("rest", aliases="下班", priority=3, block=True)
+rest = on_command("rest", aliases={"下班"}, priority=3, block=True)
 
 @rest.handle()
 async def handle_rest(bot: Bot):

@@ -4,6 +4,9 @@
 # 低情商：写数据库好麻烦
 # 高情商：便于移殖  ( •̀ ω •́ )✧
 
+# 迟到的 edit :
+# 好耶用内存！全到存到内存里！
+
 
 from nonebot import on_command
 from nonebot.adapters import Bot
@@ -53,9 +56,12 @@ def save_to_file(data: dict):
     f = open(data_path, "wb")
     dump(data, f)
     f.close()
+
+def save_at_exit(data: dict):
+    save_to_file(data)
     print("[sleep_tracker.py]: 已将 data 保存至数据文件。")
 
-atexit.register(save_to_file, data)
+atexit.register(save_at_exit, data)
 
 
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
@@ -76,10 +82,6 @@ async def handle_night(bot: Bot, event: MessageEvent):
     # 5:00 前收到的晚安命令算到前一天里
     if time.hour < 5:
         date -= timedelta(days=1)
-
-    # f = open(data_path, "rb")
-    # data = load(f)
-    # f.close()
 
     # 存入入睡时间
     if gid in data:
@@ -108,13 +110,9 @@ async def handle_night(bot: Bot, event: MessageEvent):
                 uid: [time, -1]
             }
         }
-
-    f = open(data_path, "wb")
-    dump(data, f)
-    f.close()
+    save_to_file(data)
 
     order = data[gid][date][-1][0]
-
     await good_night.finish(MessageSegment.at(uid) + f"晚安啦，你是本群第 {order} 个睡觉的人！记得睡觉要说到做到哦！")
 
 
@@ -135,10 +133,6 @@ async def handle_morning(bot: Bot, event: MessageEvent):
     if time.hour < 3 or time.hour >= 14:
         await good_morning.finish("早上好……诶！怎么想都不太对吧！")
         return
-
-    # f = open(data_path, "rb")
-    # data = load(f)
-    # f.close()
 
     # 存入起床时间
     if gid in data:
@@ -166,10 +160,7 @@ async def handle_morning(bot: Bot, event: MessageEvent):
                 uid: [-1, time]
             }
         }
-
-    f = open(data_path, "wb")
-    dump(data, f)
-    f.close()
+    save_to_file(data)
 
     time_list = data[gid][date][uid]
     order = data[gid][date][-1][1]

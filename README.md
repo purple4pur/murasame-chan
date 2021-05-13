@@ -1,5 +1,7 @@
 # ムラサメです！
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/aa04ded1a99e4ba097c100bef0915a3b)](https://www.codacy.com/gh/purple4pur/murasame-chan/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=purple4pur/murasame-chan&amp;utm_campaign=Badge_Grade)
+
 基于 [nonebot2](https://github.com/nonebot/nonebot2) 的简单 QQBot，想到 ~~（会写）~~ 什么功能就写什么，就先从复刻 [猫猫(osu!bot)](https://github.com/Monodesu/osucat) 的一些简单娱乐功能开始吧……
 
 ## 小丛雨现在可以……
@@ -22,12 +24,12 @@
 
 ### 娱乐系列
 
-| Command           | Description                                                           | Example              |
-| :---------------- | :-------------------------------------------------------------------- | :------------------- |
-| `/sleep`, `/睡觉` | 想睡觉啦？小丛雨发语音给你助眠！                                      |                      |
-| `/晚安`           | [见下文](#晚安早-命令详解)                                            |                      |
-| `/早`             | [见下文](#晚安早-命令详解)                                            |                      |
-| `/给点<日榜>`     | 默认随机返回一张 Pixiv 周榜 top30，参数为 `日榜` 时返回随机日榜 top30 | `/给点`, `/给点日榜` |
+| Command       | Description                                                           | Example              |
+| :------------ | :-------------------------------------------------------------------- | :------------------- |
+| `/sleep`      | 想睡觉啦？小丛雨发语音给你助眠！                                      |                      |
+| `/晚安`       | [见下文](#晚安早-命令详解)                                            |                      |
+| `/早`         | [见下文](#晚安早-命令详解)                                            |                      |
+| `/给点<日榜>` | 默认随机返回一张 Pixiv 周榜 top30，参数为 `日榜` 时返回随机日榜 top20 | `/给点`, `/给点日榜` |
 
 #### `/晚安`、`/早` 命令详解
 

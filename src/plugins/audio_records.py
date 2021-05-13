@@ -16,7 +16,7 @@ def get_record_url():
     return f"file://{path}/../static/audio/{choice(records)}"
 
 
-sleep = on_command("sleep", aliases={"睡觉"}, priority=3, block=True)
+sleep = on_command("sleep", priority=3, block=True)
 
 @sleep.handle()
 async def handle_en(bot: Bot):

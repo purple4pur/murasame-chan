@@ -27,7 +27,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-30")
+        is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
     else:
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
 

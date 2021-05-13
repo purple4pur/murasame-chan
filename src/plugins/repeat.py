@@ -18,7 +18,7 @@ async def handle(bot: Bot, event: MessageEvent):
 
     # 该群被记录过
     if group_id in history:
-        
+
         # 群友开始复读了
         if msg == history[group_id][0]:
             history[group_id][1] += 1
@@ -27,7 +27,7 @@ async def handle(bot: Bot, event: MessageEvent):
             if history[group_id][1] >= 2 and history[group_id][2] is False:
                 await repeat.send(msg)
                 history[group_id][2] = True
-        
+
         # 更新最后一条消息记录
         else:
             history[group_id] = [msg, 1, False]

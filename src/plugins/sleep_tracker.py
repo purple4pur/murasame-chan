@@ -61,7 +61,7 @@ atexit.register(save_to_file, data)
 good_night = on_command("晚安", permission=GROUP, priority=3, block=True)
 
 @good_night.handle()
-async def handle_en(bot: Bot, event: MessageEvent):
+async def handle_night(bot: Bot, event: MessageEvent):
     session_id = event.get_session_id().split("_")
     gid = int(session_id[1])
     uid = int(event.get_user_id())
@@ -89,7 +89,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
                 # 如果已有入睡时间，刷新为新时间
                 if data[gid][date][uid][0] != -1:
                     data[gid][date][uid][0] = time
-                    await good_night.finish(f"哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz")
+                    await good_night.finish("哼！不是已经说好了要睡觉了嘛！这次就原谅你了，赶快睡觉吧zzz")
                     return
 
                 data[gid][date][uid][0] = time
@@ -121,7 +121,7 @@ async def handle_en(bot: Bot, event: MessageEvent):
 good_morning = on_command("早", permission=GROUP, priority=3, block=True)
 
 @good_morning.handle()
-async def handle_en(bot: Bot, event: MessageEvent):
+async def handle_morning(bot: Bot, event: MessageEvent):
     session_id = event.get_session_id().split("_")
     gid = int(session_id[1])
     uid = int(event.get_user_id())

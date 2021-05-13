@@ -31,11 +31,13 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     else:
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
 
-    if not is_timeout:
+    if is_timeout:
+        await pixiv.finish("苦しい……请求超时了，稍后重试一下呢")
+    elif status:
+        await pixiv.finish(f"苦しい……访问出错了({status})，稍后重试一下呢")
+    else:
         chosen = choice(data)
         await pixiv.finish(f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
-    else:
-        await pixiv.finish("苦しい……请求超时了，稍后重试一下呢")
 
 
 async def get_image_data(url: str = None, keyword: str = None) -> (bool, str, list):
@@ -50,7 +52,7 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, str, li
 
     # 请求超时
     except socket.timeout:
-        return (True, "", data)
+        return (True, None, data)
 
     else:
         for entry in rss["entries"]:

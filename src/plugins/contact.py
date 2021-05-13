@@ -1,6 +1,6 @@
 from nonebot import on_command
 from nonebot.adapters import Bot
-from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
+from nonebot.adapters.cqhttp import MessageEvent
 
 from datetime import datetime
 
@@ -12,7 +12,7 @@ async def handle(bot: Bot, event: MessageEvent):
     content = str(event.get_message()).strip()
     if not content:
         await contact.finish("啊叻？小丛雨不知道要发送什么啦...")
-    
+
     else:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

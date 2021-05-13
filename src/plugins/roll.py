@@ -24,18 +24,18 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         is_valid = True
         if "arg1" in state:
             try:
-                max = int(state["arg1"])
+                max_num = int(state["arg1"])
             except ValueError:
-                max = -1
-            if max <= 0:
+                max_num = -1
+            if max_num <= 0:
                 is_valid = False
         else:
-            max = 100
+            max_num = 100
 
         if is_valid:
-            r = randint(0, max)
+            r = randint(0, max_num)
             ending = "好耶！"
-            if r <= round(max/3):
+            if r <= round(max_num/3):
                 ending = "不会吧不会吧？"
             await roll.finish(MessageSegment.at(event.get_user_id()) + f"摇了 {r}！" + ending)
         else:

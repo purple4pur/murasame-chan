@@ -17,7 +17,7 @@ welcome_msg = "ムラサメです！请到 purple4pur.com/murasame-chan 查看�
 friend_request = on_request()
 
 @friend_request.handle()
-async def handle(bot: Bot, event: FriendRequestEvent):
+async def handle_friend_request(bot: Bot, event: FriendRequestEvent):
     await event.approve(bot)
 
 
@@ -25,7 +25,7 @@ async def handle(bot: Bot, event: FriendRequestEvent):
 friend_add = on_notice()
 
 @friend_add.handle()
-async def handle(bot: Bot, event: FriendAddNoticeEvent):
+async def handle_friend_add(bot: Bot, event: FriendAddNoticeEvent):
     user_id = event.user_id
     await bot.send_private_msg(user_id=user_id, message=welcome_msg)
     await bot.send_private_msg(user_id=593457446, message=f"已添加新好友：{user_id}")
@@ -35,7 +35,7 @@ async def handle(bot: Bot, event: FriendAddNoticeEvent):
 group_request = on_notice()
 
 @group_request.handle()
-async def handle(bot: Bot, event: GroupRequestEvent):
+async def handle_group_request(bot: Bot, event: GroupRequestEvent):
     await event.approve(bot)
     group_id = event.group_id
     await bot.send_group_msg(group_id=group_id, message=welcome_msg)
@@ -46,7 +46,7 @@ async def handle(bot: Bot, event: GroupRequestEvent):
 friend_recall = on_notice()
 
 @friend_recall.handle()
-async def handle(bot: Bot, event: FriendRecallNoticeEvent):
+async def handle_friend_recall(bot: Bot, event: FriendRecallNoticeEvent):
     msg_id = event.message_id
     user_id = event.get_user_id()
     msg = await bot.get_msg(message_id=msg_id)
@@ -60,7 +60,7 @@ test_group_list = [595741581, 873459758]
 group_recall = on_notice()
 
 @group_recall.handle()
-async def handle(bot: Bot, event: GroupRecallNoticeEvent):
+async def handle_group_recall(bot: Bot, event: GroupRecallNoticeEvent):
     msg_id = event.message_id
     operator_id = event.operator_id
     sender_id = event.user_id

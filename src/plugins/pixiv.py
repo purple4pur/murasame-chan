@@ -33,7 +33,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     if is_timeout:
         await pixiv.finish("苦しい……请求超时了，稍后重试一下呢")
-    elif status:
+    elif status != "200":
         await pixiv.finish(f"苦しい……访问出错了({status})，稍后重试一下呢")
     else:
         chosen = choice(data)

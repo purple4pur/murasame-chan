@@ -26,15 +26,25 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         for i in range(argc):
             state[f"arg{i+1}"] = arg_list[i]
 
+    is_search = False
     if argc > 0 and state["arg1"] == "日榜":
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
+    elif argc > 0:
+        is_search = True
+        keyword = state["arg1"]
+        is_timeout, status, data = await get_image_data(keyword=keyword)
     else:
         is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
+
+    if is_search:
+        await pixiv.send(f"正在找[{keyword}]……")
 
     if is_timeout:
         await pixiv.finish("苦しい……请求超时了，稍后重试一下呢")
     elif status != 200:
         await pixiv.finish(f"苦しい……访问出错了({status})，稍后重试一下呢")
+    elif len(data) == 0:
+        await pixiv.finish("寂しい……什么都没有呢")
     else:
         chosen = choice(data)
         await pixiv.finish(f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))

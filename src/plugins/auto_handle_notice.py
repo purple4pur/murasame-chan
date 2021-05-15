@@ -1,6 +1,6 @@
 from nonebot import on_notice, on_request
 from nonebot.adapters import Bot
-from nonebot.adapters.cqhttp import MessageSegment, unescape
+from nonebot.adapters.cqhttp import unescape
 from nonebot.adapters.cqhttp.event import (
     FriendRequestEvent,
     FriendAddNoticeEvent,

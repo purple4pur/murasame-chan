@@ -9,10 +9,11 @@ import socket
 from random import choice
 from urllib.parse import quote
 from urllib.error import URLError
+from feedparser_data import RssAsync
 
 
 # 设置全局 timeout
-socket.setdefaulttimeout(10)
+# socket.setdefaulttimeout(10)
 
 
 pixiv = on_command("给点", priority=1, block=True)
@@ -55,7 +56,7 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, int, li
         url = f"https://rsshub.app/pixiv/search/{quote(keyword)}/popular/1"
 
     try:
-        rss = feedparser.parse(url)
+        rss = await RssAsync.get_data(url_to_parse=url, bypass_bozo=True)
 
     # 请求超时
     except (socket.timeout, URLError):

@@ -25,7 +25,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     if argc > 0 and state["arg1"] == "日榜":
         is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0 and state["arg1"] == "月榜":
-        is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
+        is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-30")
     elif argc > 0:
         keyword = state["arg1"]
         await pixiv.send(f"正在查询[{keyword}]……")
@@ -34,15 +34,22 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
 
     uid = event.user_id
+    session_id = event.get_session_id().split("_")
+    # 消息来自群聊
+    if len(session_id) == 3:
+        at = MessageSegment.at(uid) + "\n"
+    else:
+        at = ""
+
     if is_timeout:
-        await pixiv.finish(MessageSegment.at(uid) + "苦しい……请求超时了(´。＿。｀)")
+        await pixiv.finish(at + "苦しい……请求超时了(´。＿。｀)")
     if is_error:
-        await pixiv.finish(MessageSegment.at(uid) + "苦しい……连接出错了(´。＿。｀)")
+        await pixiv.finish(at + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
-        await pixiv.finish(MessageSegment.at(uid) + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
+        await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(MessageSegment.at(uid) + f"\n{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
+        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
 async def get_image_data(url: str = None, keyword: str = None) -> (bool, bool, list):

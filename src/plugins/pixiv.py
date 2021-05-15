@@ -3,17 +3,11 @@ from nonebot.adapters import Bot
 from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
 
-import feedparser
 import re
-import socket
 from random import choice
 from urllib.parse import quote
-from urllib.error import URLError
 from feedparser_data import RssAsync
-
-
-# 设置全局 timeout
-# socket.setdefaulttimeout(10)
+from httpx import ConnectTimeout
 
 
 pixiv = on_command("给点", priority=1, block=True)
@@ -32,7 +26,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         is_timeout, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0:
         keyword = state["arg1"]
-        await pixiv.send(f"正在找[{keyword}]……")
+        await pixiv.send(f"正在查询[{keyword}]……")
         is_timeout, data = await get_image_data(keyword=keyword)
     else:
         is_timeout, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
@@ -57,8 +51,8 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, list):
         rssasync = RssAsync()
         rss = await rssasync.get_data(url_to_parse=url, bypass_bozo=True)
 
-    # 请求超时
-    except (socket.timeout, URLError):
+    # 连接超时
+    except ConnectTimeout:
         return (True, data)
 
     else:

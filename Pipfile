@@ -8,7 +8,6 @@ nb-cli = "*"
 nonebot = "*"
 nonebot-adapter-cqhttp = "*"
 python-dotenv = "*"
-feedparser = "*"
 feedparser-data = "*"
 
 [dev-packages]

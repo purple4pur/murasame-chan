@@ -8,6 +8,7 @@ import re
 import socket
 from random import choice
 from urllib.parse import quote
+from urllib.error import URLError
 
 
 # 设置全局 timeout
@@ -57,7 +58,7 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, int, li
         rss = feedparser.parse(url)
 
     # 请求超时
-    except socket.timeout:
+    except (socket.timeout, URLError):
         return (True, None, data)
 
     else:

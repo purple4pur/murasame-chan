@@ -58,6 +58,6 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, int, li
         for entry in rss["entries"]:
             data.append([entry["title"], entry["link"], entry["summary"]])
         for item in data:
-            item[1] = item[1][12:]
+            item[1] = item[1][12:].replace("artworks", "i")
             item[2] = re.findall(r"src=.+?jpg", item[2])[0][5:]
         return (False, rss["status"], data)

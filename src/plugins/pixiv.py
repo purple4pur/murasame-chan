@@ -39,7 +39,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     if is_error:
         await pixiv.finish(MessageSegment.at(uid) + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
-        await pixiv.finish(MessageSegment.at(uid) + "寂しい……什么都没找到呢。参考下 Pixiv 的热门 tag 哦~")
+        await pixiv.finish(MessageSegment.at(uid) + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
         await pixiv.finish(MessageSegment.at(uid) + f"\n{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))

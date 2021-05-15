@@ -29,18 +29,16 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
+        is_timeout, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0:
         keyword = state["arg1"]
         await pixiv.send(f"正在找[{keyword}]……")
-        is_timeout, status, data = await get_image_data(keyword=keyword)
+        is_timeout, data = await get_image_data(keyword=keyword)
     else:
-        is_timeout, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
+        is_timeout, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
 
     if is_timeout:
         await pixiv.finish("苦しい……请求超时了，稍后重试一下呢")
-    elif status != 200:
-        await pixiv.finish(f"苦しい……访问出错了({status})，稍后重试一下呢")
     elif len(data) == 0:
         await pixiv.finish("寂しい……什么都没有呢")
     else:
@@ -48,19 +46,20 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
-async def get_image_data(url: str = None, keyword: str = None) -> (bool, int, list):
-                                                            # 是否超时，状态码，data 数组
+async def get_image_data(url: str = None, keyword: str = None) -> (bool, list):
+                                                             # 是否超时，data 数组
     data = []
 
     if keyword:
         url = f"https://rsshub.app/pixiv/search/{quote(keyword)}/popular/1"
 
     try:
-        rss = await RssAsync.get_data(url_to_parse=url, bypass_bozo=True)
+        rssasync = RssAsync()
+        rss = await rssasync.get_data(url_to_parse=url, bypass_bozo=True)
 
     # 请求超时
     except (socket.timeout, URLError):
-        return (True, None, data)
+        return (True, data)
 
     else:
         for entry in rss["entries"]:
@@ -68,4 +67,4 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, int, li
         for item in data:
             item[1] = item[1][12:].replace("artworks", "i")
             item[2] = re.findall(r"src=.+?jpg", item[2])[0][5:]
-        return (False, rss["status"], data)
+        return (False, data)

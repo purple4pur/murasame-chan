@@ -24,7 +24,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     if argc > 0 and state["arg1"] == "日榜":
         is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
-    if argc > 0 and state["arg1"] == "月榜":
+    elif argc > 0 and state["arg1"] == "月榜":
         is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
         keyword = state["arg1"]

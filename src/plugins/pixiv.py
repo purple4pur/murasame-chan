@@ -66,7 +66,7 @@ async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30
         rss, status = await async_feedparser(url, timeout)
 
     # 连接超时
-    except (httpx.Timeout, httpcore.TimeoutException):
+    except (httpx.TimeoutException, httpcore.TimeoutException):
         return (True, False, 0, data)
     # 连接出错
     except (httpx.NetworkError, httpcore.NetworkError):

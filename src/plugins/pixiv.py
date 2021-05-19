@@ -9,8 +9,6 @@ import feedparser
 import httpcore
 from random import choice
 from urllib.parse import quote
-# from feedparser_data import RssAsync
-# from httpx import TimeoutException, NetworkError
 
 
 pixiv = on_command("给点", priority=1, block=True)
@@ -31,7 +29,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
         keyword = state["arg1"]
-        await pixiv.send(f"正在查询[{keyword}]……")
+        await pixiv.send(f"正在搜索[{keyword}]……")
         is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=10)
     else:
         is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
@@ -46,6 +44,8 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     if is_timeout:
         await pixiv.finish(at + f"({status})苦しい……请求超时了(´。＿。｀)")
+    if status != 200 and status != 0:
+        await pixiv.finish(at + f"苦しい……连接出错了({status})，可以重试一下呢！")
     if is_error:
         await pixiv.finish(at + f"({status})苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:

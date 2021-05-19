@@ -44,11 +44,11 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     if is_timeout:
         await pixiv.finish(at + "苦しい……请求超时了(´。＿。｀)")
     if status != 200 and status != 0:
-        await pixiv.finish(at + f"苦しい……连接出错了({status})，可以重试一下呢！")
+        await pixiv.finish(at + f"苦しい……连接出错了({status})，可以马上重试一下呢！")
     if is_error:
         await pixiv.finish(at + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
-        await pixiv.finish(at + f"({status})寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
+        await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
         await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))

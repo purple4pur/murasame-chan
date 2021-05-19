@@ -1,14 +1,13 @@
 from nonebot import on_command
 from nonebot.adapters import Bot
 from nonebot.typing import T_State
-from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
+from nonebot.adapters.cqhttp import MessageEvent, MessageSegment, unescape
 
 import re
 import httpx
 import feedparser
 import httpcore
 from random import choice
-from urllib.parse import quote
 
 
 pixiv = on_command("给点", priority=1, block=True)
@@ -28,9 +27,9 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     elif argc > 0 and state["arg1"] == "月榜":
         is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
-        keyword = state["arg1"]
+        keyword = unescape(state["arg1"])
         await pixiv.send(f"正在搜索[{keyword}]……")
-        is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=10)
+        is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=15)
     else:
         is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
 
@@ -43,16 +42,16 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         at = ""
 
     if is_timeout:
-        await pixiv.finish(at + f"({status})苦しい……请求超时了(´。＿。｀)")
+        await pixiv.finish(at + "苦しい……请求超时了(´。＿。｀)")
     if status != 200 and status != 0:
         await pixiv.finish(at + f"苦しい……连接出错了({status})，可以重试一下呢！")
     if is_error:
-        await pixiv.finish(at + f"({status})苦しい……连接出错了(´。＿。｀)")
+        await pixiv.finish(at + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
         await pixiv.finish(at + f"({status})寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(at + f"({status}){chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
+        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
 async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
@@ -60,7 +59,7 @@ async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30
     data = []
 
     if keyword:
-        url = f"https://rsshub.app/pixiv/search/{quote(keyword)}/popular/1"
+        url = f"https://rsshub.app/pixiv/search/{keyword}/popular/1"
 
     try:
         rss, status = await async_feedparser(url, timeout)

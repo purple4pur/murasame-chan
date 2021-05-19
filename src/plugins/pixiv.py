@@ -6,6 +6,7 @@ from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
 import re
 import httpx
 import feedparser
+import httpcore
 from random import choice
 from urllib.parse import quote
 # from feedparser_data import RssAsync
@@ -51,7 +52,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + f"({status})寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(at + f"({status})\n{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
+        await pixiv.finish(at + f"({status}){chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
 async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
@@ -65,11 +66,11 @@ async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30
         rss, status = await async_feedparser(url, timeout)
 
     # 连接超时
-    except httpx.TimeoutException:
-        return (True, False, status, data)
+    except httpcore.TimeoutException:
+        return (True, False, 0, data)
     # 连接出错
     except httpx.NetworkError:
-        return (False, True, status, data)
+        return (False, True, 0, data)
 
     else:
         for entry in rss["entries"]:

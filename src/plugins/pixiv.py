@@ -31,7 +31,8 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.send(f"正在搜索[{keyword}]……")
         is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=15)
     else:
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
+        # is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
+        is_timeout, is_error, status, data = await get_image_data_v2()
 
     uid = event.user_id
     session_id = event.get_session_id().split("_")
@@ -58,15 +59,27 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
     '''
     获取图片信息函数 v2 版，采用 Lolicon API (https://api.lolicon.app/#/setu)
 
-    `returns` :
+    `returns` : 是否超时，是否连接出错，状态码，data 数组
     '''
+    url_base = "https://api.lolicon.app/setu/v2"
+    data = []
+
     # 未指定关键词，返回随机图片
     if keyword is None:
-        pass
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            r = await client.get(url_base)
+            d = r.json()["data"][0] # dict，图片信息
+            data.append([
+                d["title"],                # 标题
+                "pixiv.net/i/" + d["pid"], # pixiv 地址
+                d["urls"]["original"]      # 图片镜像链接
+            ])
 
     # 按关键词搜索
     else:
         pass
+
+    return (False, False, 200, data)
 
 
 async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):

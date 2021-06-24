@@ -23,9 +23,11 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/daily-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/daily-10")
+    elif argc > 0 and state["arg1"] == "周榜":
+        is_timeout, is_error, status, data = await get_image_data_v1(url="http://rakuen.thec.me/PixivRss/weekly-10")
     elif argc > 0 and state["arg1"] == "月榜":
-        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/monthly-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/monthly-10")
     elif argc > 0:
         keyword = unescape(state["arg1"])
         await pixiv.send(f"正在搜索[{keyword}]……")
@@ -51,7 +53,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。试试范围更大的关键词哦！")
     else:
         chosen = choice(data)
-        await pixiv.send(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制链接到浏览器查看图片吧")
+        await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制图片链接到浏览器查看吧")
         await pixiv.finish(at + chosen[2])
 
 

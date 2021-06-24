@@ -23,15 +23,14 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0 and state["arg1"] == "月榜":
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
         keyword = unescape(state["arg1"])
         await pixiv.send(f"正在搜索[{keyword}]……")
-        is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=15)
+        is_timeout, is_error, status, data = await get_image_data_v1(keyword=keyword, timeout=15)
     else:
-        # is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
         is_timeout, is_error, status, data = await get_image_data_v2()
 
     uid = event.user_id
@@ -83,8 +82,12 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
     return (False, False, 200, data)
 
 
-async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
-                                                     # 是否超时，是否连接出错，状态码，data 数组
+async def get_image_data_v1(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+    '''
+    获取图片信息函数 v1 版，按关键词搜索采用 rsshub.app API (https://docs.rsshub.app/social-media.html#pixiv)
+
+    `returns` : 是否超时，是否连接出错，状态码，data 数组
+    '''
     data = []
 
     if keyword:

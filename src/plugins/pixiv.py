@@ -54,6 +54,21 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
+async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+    '''
+    获取图片信息函数 v2 版，采用 Lolicon API (https://api.lolicon.app/#/setu)
+
+    `returns` :
+    '''
+    # 未指定关键词，返回随机图片
+    if keyword is None:
+        pass
+
+    # 按关键词搜索
+    else:
+        pass
+
+
 async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
                                                      # 是否超时，是否连接出错，状态码，data 数组
     data = []

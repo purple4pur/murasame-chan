@@ -52,7 +52,8 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + f"似乎发不出图片了呜呜，复制链接到浏览器查看图片吧\n{chosen[2]}")
+        await pixiv.send(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制链接到浏览器查看图片吧")
+        await pixiv.finish(at + chosen[2])
 
 
 async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):

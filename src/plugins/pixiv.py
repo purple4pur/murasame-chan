@@ -52,7 +52,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + f"似乎发不出图片了呜呜，点击链接查看图片吧\n{chosen[2]}")
+        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + f"似乎发不出图片了呜呜，复制链接到浏览器查看图片吧\n{chosen[2]}")
 
 
 async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
@@ -70,9 +70,9 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
             r = await client.get(url_base)
             d = r.json()["data"][0]  # dict，图片信息
             data.append([
-                d["title"],                                    # 标题
-                "pixiv.net/i/" + str(d["pid"]),                # pixiv 地址
-                "https://pixiv.cat/" + str(d["pid"]) + ".jpg"  # 图片镜像链接
+                d["title"],                      # 标题
+                "pixiv.net/i/" + str(d["pid"]),  # pixiv 地址
+                d["urls"]["original"]            # 图片镜像链接
             ])
 
     # 按关键词搜索

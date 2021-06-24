@@ -68,11 +68,11 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
     if keyword is None:
         async with httpx.AsyncClient(timeout=timeout) as client:
             r = await client.get(url_base)
-            d = r.json()["data"][0] # dict，图片信息
+            d = r.json()["data"][0]  # dict，图片信息
             data.append([
-                d["title"],                     # 标题
-                "pixiv.net/i/" + str(d["pid"]), # pixiv 地址
-                d["urls"]["original"]           # 图片镜像链接
+                d["title"],                                    # 标题
+                "pixiv.net/i/" + str(d["pid"]),                # pixiv 地址
+                "https://pixiv.cat/" + str(d["pid"]) + ".jpg"  # 图片镜像链接
             ])
 
     # 按关键词搜索

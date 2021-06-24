@@ -29,7 +29,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     elif argc > 0:
         keyword = unescape(state["arg1"])
         await pixiv.send(f"正在搜索[{keyword}]……")
-        is_timeout, is_error, status, data = await get_image_data_v1(keyword=keyword, timeout=15)
+        is_timeout, is_error, status, data = await get_image_data_v2(tag=keyword)
     else:
         is_timeout, is_error, status, data = await get_image_data_v2()
 
@@ -48,14 +48,14 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     if is_error:
         await pixiv.finish(at + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
-        await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
+        await pixiv.finish(at + "寂しい……什么都没找到呢。试试范围更大的关键词哦！")
     else:
         chosen = choice(data)
         await pixiv.send(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制链接到浏览器查看图片吧")
         await pixiv.finish(at + chosen[2])
 
 
-async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+async def get_image_data_v2(tag: str = None, timeout: int = 30) -> (bool, bool, int, list):
     '''
     获取图片信息函数 v2 版，采用 Lolicon API (https://api.lolicon.app/#/setu)
 
@@ -64,10 +64,18 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
     url_base = "https://api.lolicon.app/setu/v2"
     data = []
 
-    # 未指定关键词，返回随机图片
-    if keyword is None:
-        async with httpx.AsyncClient(timeout=timeout) as client:
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        # 未指定关键词，返回随机图片
+        if tag is None:
             r = await client.get(url_base)
+
+        # 按关键词搜索
+        else:
+            params = {"tag": tag}
+            r = await client.get(url_base, params=params)
+
+        # 处理返回数据
+        if r.status_code == 200 and len(r.json()["data"]) != 0:
             d = r.json()["data"][0]  # dict，图片信息
             data.append([
                 d["title"],                      # 标题
@@ -75,11 +83,7 @@ async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bo
                 d["urls"]["original"]            # 图片镜像链接
             ])
 
-    # 按关键词搜索
-    else:
-        pass
-
-    return (False, False, 200, data)
+    return (False, False, r.status_code, data)
 
 
 async def get_image_data_v1(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):

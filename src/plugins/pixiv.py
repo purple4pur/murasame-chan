@@ -23,15 +23,15 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0 and state["arg1"] == "月榜":
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
+        is_timeout, is_error, status, data = await get_image_data_v1(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
         keyword = unescape(state["arg1"])
         await pixiv.send(f"正在搜索[{keyword}]……")
-        is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=15)
+        is_timeout, is_error, status, data = await get_image_data_v1(keyword=keyword, timeout=15)
     else:
-        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
+        is_timeout, is_error, status, data = await get_image_data_v2()
 
     uid = event.user_id
     session_id = event.get_session_id().split("_")
@@ -51,11 +51,43 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。建议查询完整且准确的作品/角色名哦！")
     else:
         chosen = choice(data)
-        await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
+        await pixiv.send(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制链接到浏览器查看图片吧")
+        await pixiv.finish(at + chosen[2])
 
 
-async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
-                                                     # 是否超时，是否连接出错，状态码，data 数组
+async def get_image_data_v2(keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+    '''
+    获取图片信息函数 v2 版，采用 Lolicon API (https://api.lolicon.app/#/setu)
+
+    `returns` : 是否超时，是否连接出错，状态码，data 数组
+    '''
+    url_base = "https://api.lolicon.app/setu/v2"
+    data = []
+
+    # 未指定关键词，返回随机图片
+    if keyword is None:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            r = await client.get(url_base)
+            d = r.json()["data"][0]  # dict，图片信息
+            data.append([
+                d["title"],                      # 标题
+                "pixiv.net/i/" + str(d["pid"]),  # pixiv 地址
+                d["urls"]["original"]            # 图片镜像链接
+            ])
+
+    # 按关键词搜索
+    else:
+        pass
+
+    return (False, False, 200, data)
+
+
+async def get_image_data_v1(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+    '''
+    获取图片信息函数 v1 版，按关键词搜索采用 rsshub.app API (https://docs.rsshub.app/social-media.html#pixiv)
+
+    `returns` : 是否超时，是否连接出错，状态码，data 数组
+    '''
     data = []
 
     if keyword:

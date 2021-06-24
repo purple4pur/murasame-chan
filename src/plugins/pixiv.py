@@ -1,13 +1,13 @@
 from nonebot import on_command
 from nonebot.adapters import Bot
 from nonebot.typing import T_State
-from nonebot.adapters.cqhttp import MessageEvent, MessageSegment
+from nonebot.adapters.cqhttp import MessageEvent, MessageSegment, unescape
 
 import re
+import httpx
+import feedparser
+import httpcore
 from random import choice
-from urllib.parse import quote
-from feedparser_data import RssAsync
-from httpx import TimeoutException, NetworkError
 
 
 pixiv = on_command("给点", priority=1, block=True)
@@ -23,15 +23,15 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
             state[f"arg{i+1}"] = arg_list[i]
 
     if argc > 0 and state["arg1"] == "日榜":
-        is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
+        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/daily-20")
     elif argc > 0 and state["arg1"] == "月榜":
-        is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-30")
+        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/monthly-20")
     elif argc > 0:
-        keyword = state["arg1"]
-        await pixiv.send(f"正在查询[{keyword}]……")
-        is_timeout, is_error, data = await get_image_data(keyword=keyword)
+        keyword = unescape(state["arg1"])
+        await pixiv.send(f"正在搜索[{keyword}]……")
+        is_timeout, is_error, status, data = await get_image_data(keyword=keyword, timeout=15)
     else:
-        is_timeout, is_error, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-30")
+        is_timeout, is_error, status, data = await get_image_data(url="https://rakuen.thec.me/PixivRss/weekly-20")
 
     uid = event.user_id
     session_id = event.get_session_id().split("_")
@@ -43,6 +43,8 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
 
     if is_timeout:
         await pixiv.finish(at + "苦しい……请求超时了(´。＿。｀)")
+    if status != 200 and status != 0:
+        await pixiv.finish(at + f"苦しい……连接出错了({status})，可以马上重试一下呢！")
     if is_error:
         await pixiv.finish(at + "苦しい……连接出错了(´。＿。｀)")
     elif len(data) == 0:
@@ -52,23 +54,22 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + f"{chosen[0]}\n{chosen[1]}\n" + MessageSegment.image(chosen[2]))
 
 
-async def get_image_data(url: str = None, keyword: str = None) -> (bool, bool, list):
-                                                         # 是否超时，是否连接出错，data 数组
+async def get_image_data(url: str = None, keyword: str = None, timeout: int = 30) -> (bool, bool, int, list):
+                                                     # 是否超时，是否连接出错，状态码，data 数组
     data = []
 
     if keyword:
-        url = f"https://rsshub.app/pixiv/search/{quote(keyword)}/popular/1"
+        url = f"https://rsshub.app/pixiv/search/{keyword}/popular/1"
 
     try:
-        rssasync = RssAsync()
-        rss = await rssasync.get_data(url_to_parse=url, bypass_bozo=True)
+        rss, status = await async_feedparser(url, timeout)
 
     # 连接超时
-    except TimeoutException:
-        return (True, False, data)
+    except (httpx.TimeoutException, httpcore.TimeoutException):
+        return (True, False, 0, data)
     # 连接出错
-    except NetworkError:
-        return (False, True, data)
+    except (httpx.NetworkError, httpcore.NetworkError):
+        return (False, True, 0, data)
 
     else:
         for entry in rss["entries"]:
@@ -76,4 +77,17 @@ async def get_image_data(url: str = None, keyword: str = None) -> (bool, bool, l
         for item in data:
             item[1] = item[1][12:].replace("artworks", "i")
             item[2] = re.findall(r"src=.+?jpg", item[2])[0][5:]
-        return (False, False, data)
+        return (False, False, status, data)
+
+
+async def async_feedparser(url="", timeout=30):
+    data = {'entries': []}
+    status_code = 0
+
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        feed = await client.get(url)
+        status_code = feed.status_code
+        if status_code == 200:
+            data = feedparser.parse(feed.text)
+
+    return (data, status_code)

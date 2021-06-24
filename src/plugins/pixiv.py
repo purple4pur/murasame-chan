@@ -54,7 +54,7 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
     else:
         chosen = choice(data)
         await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制图片链接到浏览器查看吧")
-        await pixiv.finish(at + chosen[2])
+        await pixiv.finish(chosen[2])
 
 
 async def get_image_data_v2(tag: str = None, timeout: int = 30) -> (bool, bool, int, list):

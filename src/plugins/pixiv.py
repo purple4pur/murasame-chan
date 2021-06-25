@@ -53,8 +53,8 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。试试范围更大的关键词哦！")
     else:
         chosen = choice(data)
-        await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "似乎发不出图片了呜呜，复制图片链接到浏览器查看吧")
-        await pixiv.finish(chosen[2])
+        await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "可能会发不出图片呜呜，复制下面链接到浏览器查看吧")
+        await pixiv.finish(await async_shorten_url(chosen[2]))
 
 
 async def get_image_data_v2(tag: str = None, timeout: int = 30) -> (bool, bool, int, list):
@@ -129,3 +129,23 @@ async def async_feedparser(url="", timeout=30):
             data = feedparser.parse(feed.text)
 
     return (data, status_code)
+
+
+async def async_shorten_url(url_to_shorten: str, timeout: int = 30) -> str:
+    '''
+    生成短链接，使用 Hide URI API (https://hideuri.com/docs)
+
+    `returns` : 成功则返回短链接，失败则返回原始链接
+    '''
+    url_base = "https://hideuri.com/api/v1/shorten"
+    data = {"url": url_to_shorten}
+    ret = url_to_shorten
+
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        r = await client.post(url_base, data=data)
+        if r.status_code == 200:
+            d = r.json()
+            if not "error" in d:
+                ret = d["result_url"]
+
+    return ret

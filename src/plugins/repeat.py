@@ -42,10 +42,11 @@ async def handle(bot: Bot, event: MessageEvent):
 def getProb(cnt: int):
     '''
     关于已复读次数的概率函数，对应关系：
+
     ```
-    1 -> 0.1
-    2 -> 0.5
+    1 -> 0.05
+    2 -> 0.45
     3 -> 大于 1
     ```
     '''
-    return (0.4 * (cnt-1)**2 + 0.1)
+    return (0.4 * (cnt-1)**2 + 0.05)

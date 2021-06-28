@@ -2,6 +2,7 @@ from nonebot import on_command
 from nonebot.adapters import Bot
 from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import MessageEvent, MessageSegment, unescape
+from nonebot.adapters.cqhttp.exception import ActionFailed
 
 import re
 import httpx
@@ -53,8 +54,13 @@ async def handle(bot: Bot, event: MessageEvent, state: T_State):
         await pixiv.finish(at + "寂しい……什么都没找到呢。试试范围更大的关键词哦！")
     else:
         chosen = choice(data)
-        await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "可能会发不出图片呜呜，复制下面链接到浏览器查看吧")
-        await pixiv.finish(await async_shorten_url(chosen[2]))
+        try:
+            await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n" + MessageSegment.image(chosen[2]) + "可能会发不出图片呜呜，复制下面链接到浏览器查看吧")
+        except ActionFailed as e:
+            await pixiv.send(at + f"{chosen[0]}\nPixiv 链接：{chosen[1]}\n大概是太涩了差点发不出来，复制下面链接到浏览器查看吧")
+            print(f"[pixiv.py]: {e}")
+        finally:
+            await pixiv.finish(await async_shorten_url(chosen[2]))
 
 
 async def get_image_data_v2(tag: str = None, timeout: int = 30) -> (bool, bool, int, list):

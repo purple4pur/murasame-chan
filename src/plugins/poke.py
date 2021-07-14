@@ -38,4 +38,5 @@ poke = on_notice()
 @poke.handle()
 async def handle_poke(bot: Bot, event: PokeNotifyEvent):
     if event.target_id == BOT_ID:  # 自己被戳
-        await poke.finish(MessageSegment.image(get_avatar_url()))
+        # await poke.finish(MessageSegment.image(get_avatar_url()))
+        await poke.finish(MessageSegment.image(f"file://{path}/../static/image/selection-mod-fadein@2x.png"))

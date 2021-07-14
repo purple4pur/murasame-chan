@@ -2,6 +2,7 @@ from nonebot import on_notice
 from nonebot.adapters import Bot
 from nonebot.adapters.cqhttp import MessageSegment
 from nonebot.adapters.cqhttp.event import PokeNotifyEvent
+from nonebot.adapters.cqhttp.exception import ActionFailed
 
 from pathlib import Path
 from random import choice
@@ -38,5 +39,7 @@ poke = on_notice()
 @poke.handle()
 async def handle_poke(bot: Bot, event: PokeNotifyEvent):
     if event.target_id == BOT_ID:  # 自己被戳
-        # await poke.finish(MessageSegment.image(get_avatar_url()))
-        await poke.finish(MessageSegment.image(f"file://{path}/../static/image/selection-mod-fadein@2x.png"))
+        try:
+            await poke.finish(MessageSegment.image(get_avatar_url()))
+        except ActionFailed as e:
+            print(f"[poke.py]: {e}")

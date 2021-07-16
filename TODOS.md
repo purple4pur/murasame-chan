@@ -5,5 +5,4 @@
 
 ### Known bugs
 
-- say repeat 未转义
 - httpx 请求异常未处理

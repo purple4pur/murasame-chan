@@ -40,6 +40,7 @@ poke = on_notice()
 async def handle_poke(bot: Bot, event: PokeNotifyEvent):
     if event.target_id == BOT_ID:  # 自己被戳
         try:
-            await poke.finish(MessageSegment.image(get_avatar_url()))
+            await poke.finish("狗修金！不许踢丛雨丸！" + MessageSegment.image(get_avatar_url()))
         except ActionFailed as e:
             print(f"[poke.py]: {e}")
+            await poke.finish("狗修金！不许踢丛雨丸！>_<")

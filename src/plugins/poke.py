@@ -11,17 +11,17 @@ from random import choice
 BOT_ID = 2497540344
 
 images_urls = [
-    "selection-mod-doubletime@2x.png",
+    # "selection-mod-doubletime@2x.png",
     "selection-mod-fadein@2x.png",
     "selection-mod-flashlight@2x.png",
     "selection-mod-hardrock@2x.png",
     "selection-mod-hidden@2x.png",
     "selection-mod-nightcore@2x.png",
-    "selection-mod-perfect@2x.png",
-    "selection-mod-relax@2x.png",
-    "selection-mod-relax2@2x.png",
+    # "selection-mod-perfect@2x.png",
+    # "selection-mod-relax@2x.png",
+    # "selection-mod-relax2@2x.png",
     "selection-mod-spunout@2x.png",
-    "selection-mod-suddendeath@2x.png"
+    # "selection-mod-suddendeath@2x.png"
 ]
 
 # 得到当前文件绝对路径

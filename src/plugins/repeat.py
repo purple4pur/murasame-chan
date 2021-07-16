@@ -1,6 +1,6 @@
 from nonebot import on_message
 from nonebot.adapters import Bot
-from nonebot.adapters.cqhttp import MessageEvent, unescape
+from nonebot.adapters.cqhttp import MessageEvent, escape
 from nonebot.adapters.cqhttp.permission import GROUP
 
 from random import random
@@ -36,7 +36,7 @@ async def handle(bot: Bot, event: MessageEvent):
     # 按概率复读
     if history[group_id][2] is False and random() <= getProb(history[group_id][1]):
         history[group_id][2] = True
-        await repeat.finish(unescape(msg))
+        await repeat.finish(escape(msg))
 
 
 def getProb(cnt: int):
